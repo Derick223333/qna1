@@ -1,11 +1,11 @@
 // Firebase 설정
 const firebaseConfig = {
-    apiKey: "AIzaSyCMvXjShy3qvhI1YDYUFoeqllAAUuVgtWE",
-    authDomain: "qna12-dfe1c.firebaseapp.com",
-    projectId: "qna12-dfe1c",
-    storageBucket: "qna12-dfe1c.appspot.com",
-    messagingSenderId: "123361561242",
-    appId: "1:123361561242:web:31f6359517aeedae4aed23"
+  apiKey: "AIzaSyC-kOmuFcDfaOrsjrrFvTBUEDniEXoUP40",
+  authDomain: "pras-83751.firebaseapp.com",
+  projectId: "pras-83751",
+  storageBucket: "pras-83751.appspot.com",
+  messagingSenderId: "699303791904",
+  appId: "1:699303791904:web:455bcfab27c8088a8f9b45",
 };
 
 // Firebase 초기화
@@ -105,4 +105,6 @@ document.getElementById('questionForm').addEventListener('submit', function(even
 });
 
 // 페이지 로드 시 질문 불러오기
-loadQuestions();
+window.onload = function() {
+    loadQuestions();
+};
