@@ -6,6 +6,7 @@ const firebaseConfig = {
   storageBucket: "pras-83751.appspot.com",
   messagingSenderId: "699303791904",
   appId: "1:699303791904:web:455bcfab27c8088a8f9b45",
+  measurementId: "G-V5BZVFZYNH"
 };
 
 // Firebase 초기화
