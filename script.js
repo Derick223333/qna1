@@ -1,25 +1,28 @@
 // Firebase 설정
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+// Firebase 설정
 const firebaseConfig = {
-  apiKey: "AIzaSyC-kOmuFcDfaOrsjrrFvTBUEDniEXoUP40",
-  authDomain: "pras-83751.firebaseapp.com",
-  projectId: "pras-83751",
-  storageBucket: "pras-83751.appspot.com",
-  messagingSenderId: "699303791904",
-  appId: "1:699303791904:web:455bcfab27c8088a8f9b45",
-  measurementId: "G-V5BZVFZYNH"
+    apiKey: "AIzaSyC-kOmuFcDfaOrsjrrFvTBUEDniEXoUP40",
+    authDomain: "pras-83751.firebaseapp.com",
+    projectId: "pras-83751",
+    storageBucket: "pras-83751.appspot.com",
+    messagingSenderId: "699303791904",
+    appId: "1:699303791904:web:455bcfab27c8088a8f9b45",
+    measurementId: "G-V5BZVFZYNH"
 };
 
 // Firebase 초기화
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // 질문 불러오기
-function loadQuestions() {
-    db.collection("questions").get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            displayQuestion(data.text, doc.id, data.answers);
-        });
+async function loadQuestions() {
+    const querySnapshot = await getDocs(collection(db, "questions"));
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        displayQuestion(data.text, doc.id, data.answers);
     });
 }
 
@@ -50,7 +53,7 @@ function displayQuestion(questionText, questionId, answers) {
         answerButton.textContent = answerButton.textContent === '답변하기' ? '답변 취소' : '답변하기';
     });
 
-    answerInput.addEventListener('keypress', function(event) {
+    answerInput.addEventListener('keypress', async function(event) {
         if (event.key === 'Enter' && answerInput.value) {
             const answerDiv = document.createElement('div');
             answerDiv.classList.add('answer');
@@ -58,14 +61,14 @@ function displayQuestion(questionText, questionId, answers) {
             questionDiv.appendChild(answerDiv);
             
             // Firestore에 답변 저장
-            db.collection("questions").doc(questionId).update({
-                answers: firebase.firestore.FieldValue.arrayUnion(answerInput.value)
-            }).then(() => {
-                Swal.fire({
-                    icon: 'success',
-                    title: '답변이 등록되었습니다!',
-                    text: '답변이 성공적으로 추가되었습니다.',
-                });
+            await updateDoc(doc(db, "questions", questionId), {
+                answers: arrayUnion(answerInput.value)
+            });
+
+            Swal.fire({
+                icon: 'success',
+                title: '답변이 등록되었습니다!',
+                text: '답변이 성공적으로 추가되었습니다.',
             });
 
             answerInput.value = '';
@@ -88,22 +91,19 @@ function displayQuestion(questionText, questionId, answers) {
 }
 
 // 질문 등록 및 Firestore에 저장
-document.getElementById('questionForm').addEventListener('submit', function(event) {
+document.getElementById('questionForm').addEventListener('submit', async function(event) {
     event.preventDefault();
     
     const questionInput = document.getElementById('questionInput');
     const questionText = questionInput.value;
 
     if (questionText) {
-        db.collection("questions").add({
+        const docRef = await addDoc(collection(db, "questions"), {
             text: questionText,
             answers: []
-        }).then((docRef) => {
-            displayQuestion(questionText, docRef.id, []);
-            questionInput.value = ''; // 입력 필드 초기화
-        }).catch((error) => {
-            console.error("질문 등록 오류: ", error);
         });
+        displayQuestion(questionText, docRef.id, []);
+        questionInput.value = ''; // 입력 필드 초기화
     }
 });
 
