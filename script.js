@@ -99,7 +99,9 @@ document.getElementById('questionForm').addEventListener('submit', function(even
             answers: []
         }).then((docRef) => {
             displayQuestion(questionText, docRef.id, []);
-            questionInput.value = '';
+            questionInput.value = ''; // 입력 필드 초기화
+        }).catch((error) => {
+            console.error("질문 등록 오류: ", error);
         });
     }
 });
